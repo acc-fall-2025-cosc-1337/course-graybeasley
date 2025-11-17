@@ -1,3 +1,6 @@
+#ifndef TIC_TAC_TOE_H
+#define TIC_TAC_TOE_H
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -28,3 +31,5 @@ private:
     bool check_diagonal_win(); 
     void set_winner();         
 };
+
+#endif // TIC_TAC_TOE_H
