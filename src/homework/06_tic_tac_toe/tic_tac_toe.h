@@ -1,30 +1,34 @@
+#ifndef TIC_TAC_TOE_H
+#define TIC_TAC_TOE_H
+
 #include <string>
 #include <vector>
-#include <iostream>
-using std::string; 
-using std::vector; 
-using std::cout; 
 
 class TicTacToe
 {
 public:
-    void start_game(string first_player);
+    TicTacToe(int size);
+
+    void start_game(std::string first_player);
     void mark_board(int position);
     bool game_over();
+    std::string get_winner() const;
     void display_board() const;
-    string get_player() const;
-    string get_winner() const; 
+
+protected:
+    std::vector<std::string> pegs;
+    std::string winner;
+    std::string next_player;
+
+    bool check_board_full();
+    void set_next_player();
+
+    virtual bool check_column_win();
+    virtual bool check_row_win();
+    virtual bool check_diagonal_win();
 
 private:
-    string player;
-    string winner; 
-    vector<string> pegs = vector<string>(9, " ");
-
     void clear_board();
-    void set_next_player();
-    bool check_board_full();
-    bool check_column_win();   
-    bool check_row_win();      
-    bool check_diagonal_win(); 
-    void set_winner();         
 };
+
+#endif

@@ -1,40 +1,55 @@
-#include "tic_tac_toe.h"
+#include "tic_tac_toe_manager.h"
+#include "tic_tac_toe_3.h"
+#include "tic_tac_toe_4.h"
+
 #include <iostream>
-using std::cin;
-using std::cout;
-using std::string;
+#include <memory>
 
 int main()
 {
-    string first_player;
-    char choice = 'y';
+    TicTacToeManager manager;
+    std::string play_again = "Y";
 
-    while (choice == 'y' || choice == 'Y')
+    while (play_again == "Y" || play_again == "y")
     {
-        TicTacToe game;
-        do
-        {
-            cout << "Enter first player (X or O): ";
-            cin >> first_player;
-        } while (first_player != "X" && first_player != "O");
+        int game_type;
+        std::cout << "Play TicTacToe 3 or 4? Enter 3 or 4: ";
+        std::cin >> game_type;
 
-        game.start_game(first_player);
+        std::unique_ptr<TicTacToe> game;
+
+        if (game_type == 3)
+            game = std::make_unique<TicTacToe3>();
+        else
+            game = std::make_unique<TicTacToe4>();
+
+        std::string first_player;
+        std::cout << "Enter first player (X or O): ";
+        std::cin >> first_player;
+
+        game->start_game(first_player);
 
         int position;
-        while (!game.game_over())
+        while (!game->game_over())
         {
-            cout << "Enter position (1-9): ";
-            cin >> position;
-            game.mark_board(position);
-            game.display_board();
+            game->display_board();
+            std::cout << "\nEnter position: ";
+            std::cin >> position;
+            game->mark_board(position);
         }
 
-        cout << "Game over! Winner: " << game.get_winner() << "\n";
+        game->display_board();
+        std::cout << "Winner: " << game->get_winner() << "\n";
 
-        cout << "Play again? (y/n): ";
-        cin >> choice;
+        manager.save_game(std::move(game));
+
+        std::cout << "Play again? (Y/N): ";
+        std::cin >> play_again;
     }
 
-    cout << "Goodbye!\n";
+    int x, o, t;
+    manager.get_winner_total(x, o, t);
+    std::cout << "\nTotals - X: " << x << "  O: " << o << "  Ties: " << t << "\n";
+
     return 0;
 }

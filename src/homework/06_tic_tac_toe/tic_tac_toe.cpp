@@ -1,121 +1,96 @@
 #include "tic_tac_toe.h"
+#include <iostream>
+#include <cmath> 
 
-void TicTacToe::start_game(string first_player)
+TicTacToe::TicTacToe(int size) : pegs(size * size, " ")
 {
-    if (first_player == "X" || first_player == "O")
-    {
-        player = first_player;
-        clear_board();
-    }
+}
+
+void TicTacToe::start_game(std::string first_player)
+{
+    next_player = first_player;
+    clear_board();
 }
 
 void TicTacToe::mark_board(int position)
 {
-    pegs[position - 1] = player;
+    pegs[position - 1] = next_player;
     set_next_player();
+}
+
+void TicTacToe::set_next_player()
+{
+    next_player = (next_player == "X") ? "O" : "X";
 }
 
 bool TicTacToe::game_over()
 {
-    if (check_row_win() || check_column_win() || check_diagonal_win())
+    if (check_column_win() || check_row_win() || check_diagonal_win())
     {
-        set_winner();
+        set_next_player(); // undo last change
+        winner = next_player;
         return true;
     }
-    else if (check_board_full())
+
+    if (check_board_full())
     {
-        winner = "C"; // tie
+        winner = "C";
         return true;
     }
+
     return false;
-}
-
-void TicTacToe::display_board() const
-{
-    for (int i = 0; i < 9; i += 3)
-    {
-        cout << pegs[i] << "|" << pegs[i + 1] << "|" << pegs[i + 2] << "\n";
-    }
-    cout << "\n";
-}
-
-string TicTacToe::get_player() const
-{
-    return player;
-}
-
-string TicTacToe::get_winner() const
-{
-    return winner;
-}
-
-
-void TicTacToe::set_next_player()
-{
-    if (player == "X")
-        player = "O";
-    else
-        player = "X";
 }
 
 bool TicTacToe::check_board_full()
 {
-    for (auto peg : pegs)
+    for (auto& peg : pegs)
     {
         if (peg == " ")
-        {
             return false;
-        }
     }
     return true;
 }
 
+std::string TicTacToe::get_winner() const
+{
+    return winner;
+}
+
 void TicTacToe::clear_board()
 {
-    for (auto &peg : pegs)
+    for (auto& peg : pegs)
     {
         peg = " ";
     }
 }
 
-// --- Win checkers ---
+// ---- These MUST return false since derived classes implement them ----
+
 bool TicTacToe::check_column_win()
 {
-    for (int i = 0; i < 3; i++)
-    {
-        if (pegs[i] != " " && pegs[i] == pegs[i + 3] && pegs[i] == pegs[i + 6])
-        {
-            return true;
-        }
-    }
     return false;
 }
 
 bool TicTacToe::check_row_win()
 {
-    for (int i = 0; i < 9; i += 3)
-    {
-        if (pegs[i] != " " && pegs[i] == pegs[i + 1] && pegs[i] == pegs[i + 2])
-        {
-            return true;
-        }
-    }
     return false;
 }
 
 bool TicTacToe::check_diagonal_win()
 {
-    if (pegs[0] != " " && pegs[0] == pegs[4] && pegs[0] == pegs[8])
-        return true;
-    if (pegs[6] != " " && pegs[6] == pegs[4] && pegs[6] == pegs[2])
-        return true;
     return false;
 }
 
-void TicTacToe::set_winner()
+void TicTacToe::display_board() const
 {
-    if (player == "X")
-        winner = "O";
-    else
-        winner = "X";
+    int size = static_cast<int>(std::sqrt(pegs.size()));
+
+    for (int i = 0; i < pegs.size(); i++)
+    {
+        std::cout << pegs[i];
+        if ((i + 1) % size == 0)
+            std::cout << "\n";
+        else
+            std::cout << " | ";
+    }
 }
